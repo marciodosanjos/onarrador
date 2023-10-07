@@ -1,6 +1,15 @@
 import Box from "./../components/Box";
 import Layout from "./../components/layout";
 
+interface Item {
+  title: string;
+  description: string;
+}
+
+interface HomeProps {
+  data: Item[]; // Um array de objetos do tipo 'Item'
+}
+
 export default function Home({ data }) {
   console.log(data);
   return (
