@@ -5,8 +5,12 @@ export default function Home({ data }) {
   console.log(data);
   return (
     <div>
-      {data?.map((el) => (
-        <Box title={el.title.rendered} description={el.content.rendered} />
+      {data?.map((el, ind) => (
+        <Box
+          key={ind}
+          title={el.title.rendered}
+          description={el.content.rendered}
+        />
       ))}
     </div>
   );
