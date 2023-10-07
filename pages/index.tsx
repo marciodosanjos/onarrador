@@ -1,7 +1,8 @@
 import Box from "./../components/Box";
 import Layout from "./../components/layout";
 
-interface Item {
+// interface com apenas as propriedades que a usar
+interface HomeItem {
   title: {
     rendered: string;
   };
@@ -11,7 +12,7 @@ interface Item {
 }
 
 interface HomeProps {
-  data: Item[];
+  data: HomeItem[]; // Use a nova interface aqui
 }
 
 export default function Home({ data }: HomeProps) {
@@ -28,11 +29,11 @@ export default function Home({ data }: HomeProps) {
   );
 }
 
-export async function getStaticProps() {
+export async function getStaticProps(): Promise<{ props: HomeProps }> {
   const res = await fetch(
     "https://onarrador.com/wp-json/wp/v2/home-service-item",
   );
-  const data = await res.json();
+  const data: HomeItem[] = await res.json();
 
   return {
     props: {
