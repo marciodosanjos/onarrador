@@ -1,7 +1,7 @@
 import Box from "./../components/Box";
-import Layout from "./../components/layout";
+import Layout from "./../components/Layout";
 
-// interface com apenas as propriedades que a usar
+// Define interface for HomeItem
 interface HomeItem {
   title: {
     rendered: string;
@@ -11,34 +11,56 @@ interface HomeItem {
   };
 }
 
+// Define interface for HomeProps
 interface HomeProps {
-  data: HomeItem[]; // Use a nova interface aqui
+  data: HomeItem[]; // Use the HomeItem interface here
 }
 
 export default function Home({ data }: HomeProps) {
   return (
-    <div>
-      {data?.map((el, ind) => (
-        <Box
-          key={ind}
-          title={el.title.rendered}
-          description={el.content.rendered}
-        />
-      ))}
-    </div>
+    <>
+      <Layout>
+        <div>
+          {data?.map((el, ind) => (
+            <Box
+              key={ind}
+              title={el.title.rendered}
+              description={el.content.rendered}
+            />
+          ))}
+        </div>
+      </Layout>
+    </>
   );
 }
 
-export async function getStaticProps(): Promise<{ props: HomeProps }> {
-  const res = await fetch(
-    "https://onarrador.com/wp-json/wp/v2/home-service-item",
-  );
-  const data: HomeItem[] = await res.json();
+export async function getStaticProps() {
+  try {
+    const res = await fetch(
+      "https://onarrador.com/wp-json/wp/v2/home-service-item",
+    );
 
-  return {
-    props: {
-      data,
-    },
-    revalidate: 10,
-  };
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const data: HomeItem[] = await res.json();
+    console.log(data);
+
+    return {
+      props: {
+        data,
+      },
+      revalidate: 10,
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+
+    return {
+      props: {
+        data: [],
+      },
+      revalidate: 10,
+    };
+  }
 }

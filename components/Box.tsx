@@ -1,5 +1,3 @@
-"use client"; // This is a client component 👈🏽
-
 export default function Box(props: { title: string; description: string }) {
   return (
     <div>
