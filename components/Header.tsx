@@ -5,11 +5,20 @@ const categories = ["Cronicas", "Ensaios", "Reportagens"];
 export default function Header() {
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: "#331b3b" }}>
+      <AppBar position="static" sx={{ backgroundColor: "#primary.main" }}>
         <Toolbar variant="dense" sx={{ justifyContent: "center" }}>
-          <Typography sx={{ fontWeight: "bold", fontSize: "1.5em" }}>
-            O NARRADOR
-          </Typography>
+          <Link href={"/"}>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "3em",
+                textDecoration: "none",
+                color: "white",
+              }}
+            >
+              O NARRADOR
+            </Typography>
+          </Link>
         </Toolbar>
         <Toolbar
           variant="dense"
@@ -27,6 +36,7 @@ export default function Header() {
                 color: "black",
                 marginRight: 1,
                 textDecoration: "none",
+                fontSize: "1.5em",
                 "&:hover": { textDecoration: "underline" },
               }}
             >

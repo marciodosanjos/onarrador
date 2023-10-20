@@ -1,66 +1,120 @@
-import Box from "./../components/Box";
+import FeaturedPost from "./../components/FeaturedPost";
 import Layout from "./../components/Layout";
+import { useRouter } from "next/router";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
-// Define interface for HomeItem
-interface HomeItem {
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
+const client = new ApolloClient({
+  uri: "https://onarrador.com/graphql",
+  cache: new InMemoryCache(),
+});
+
+interface FeaturedImageNode {
+  altText: string;
+  description: string;
+  mediaItemUrl: string;
 }
 
-// Define interface for HomeProps
+interface FeaturedCategoriesNode {
+  name: string;
+  slug: string;
+}
+
+// Define interface for Article
+interface Article {
+  title: string;
+  excerpt: string;
+  categories: {
+    nodes: FeaturedCategoriesNode[];
+  };
+  slug: string;
+  featuredImage: {
+    node: FeaturedImageNode;
+  };
+  isSticky: any;
+}
+
+// Define interface for Article
 interface HomeProps {
-  data: HomeItem[]; // Use the HomeItem interface here
+  articleData: Article[];
 }
 
-export default function Home({ data }: HomeProps) {
+export default function Home({ articleData }: HomeProps) {
+  const router = useRouter();
+  const { category, slug } = router.query;
+
+  {
+    articleData.map(
+      (item, index) => item.isSticky === true && console.log(item),
+    );
+  }
+
   return (
     <>
       <Layout>
-        <div>
-          {data?.map((el, ind) => (
-            <Box
-              key={ind}
-              title={el.title.rendered}
-              description={el.content.rendered}
+        {articleData.map((item, index) =>
+          item?.isSticky === true ? (
+            <FeaturedPost
+              altText={item.title}
+              srcImg={item.featuredImage.node.mediaItemUrl}
+              excerpt={item.excerpt}
+              slug={item.slug}
+              category={item.categories.nodes[0]?.name}
+              key={index}
+              title={item.title}
+              copyrightPhoto={item.featuredImage.node.altText}
             />
-          ))}
-        </div>
+          ) : null,
+        )}
       </Layout>
     </>
   );
 }
 
-export async function getStaticProps() {
-  try {
-    const res = await fetch(
-      "https://onarrador.com/wp-json/wp/v2/home-service-item",
-    );
+export const getStaticProps = async () => {
+  const { data } = await client.query({
+    query: gql`
+      query Posts {
+        posts {
+          nodes {
+            excerpt
+            isSticky
+            date
+            categories {
+              nodes {
+                name
+                slug
+                description
+              }
+            }
+            id
+            link
+            postId
+            slug
+            title
+            content
+            tags {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+            featuredImage {
+              node {
+                altText
+                description
+                mediaItemUrl
+              }
+            }
+          }
+        }
+      }
+    `,
+  });
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
-    }
-
-    const data: HomeItem[] = await res.json();
-    console.log(data);
-
-    return {
-      props: {
-        data,
-      },
-      revalidate: 10,
-    };
-  } catch (error) {
-    console.error("Error fetching data:", error);
-
-    return {
-      props: {
-        data: [],
-      },
-      revalidate: 10,
-    };
-  }
-}
+  return {
+    props: {
+      articleData: data.posts.nodes,
+    },
+  };
+};

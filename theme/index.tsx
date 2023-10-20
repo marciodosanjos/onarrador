@@ -1,8 +1,34 @@
 import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          height: "100vh",
+          "& #__next": {
+            height: "100%",
+          },
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: "none",
+          color: "black",
+          "&:hover": {
+            color: "#5c6e6e",
+          },
+        },
+      },
+    },
+  },
+
   typography: {
-    fontFamily: ["Open Sans", "Helvetica", "Arial", "sans-serif"].join(","),
+    fontFamily: ["Times New Roman", "Helvetica", "Arial", "sans-serif"].join(
+      ",",
+    ),
   },
   palette: {
     primary: {

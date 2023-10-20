@@ -1,4 +1,4 @@
-export default function Box(props: { title: string; description: string }) {
+export default function HighlightBox(props: { title: string; description: string }) {
   return (
     <div>
       <h1>{props.title}</h1>
